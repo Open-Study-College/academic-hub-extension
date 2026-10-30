@@ -8,11 +8,11 @@ Read this page before you start. The task itself is in [README.md](./README.md).
 ## Timebox
 
 - You have **one week from the date you receive the repository link**.
-- We recommend a **maximum of four hours of actual work**. We are not trying to consume your
-  evening, and we would much rather see four focused hours than a week of polish.
-- You can go over four hours if you are enjoying it or want to finish something. It is a
-  recommendation, not a hard limit. The timebox is there to protect your time and make sure we are
-  not asking you to spend a weekend on this. It is not there to create artificial pressure.
+- Aim for the core in **about two hours**. The **maximum is four hours**. We would much rather see
+  two focused hours than a week of polish.
+- You can go over two hours if you are enjoying it or want to finish something, up to four. The
+  timebox is there to protect your time and make sure we are not asking you to spend a weekend on
+  this. It is not there to create artificial pressure.
 - If you finish early, we may be able to bring you in for a conversation sooner. Either way, please
   allow **two working days** for us to assess your work before we confirm next steps.
 - If you submit close to the deadline, we will do a quick technical review first. If it passes, we

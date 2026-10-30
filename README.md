@@ -21,23 +21,24 @@ time. Build the extension request flow and the tutor's queue.
 
 ### Must have
 
-1. **Data model and migration**
-   - Add the tables and constraints for submissions and extension requests.
+Aim for this in about two hours. Four hours is the maximum.
+
+1. **Data model**
+   - Add tables and constraints for submissions and extension requests.
    - Think about what stops a duplicate current submission, and what happens if two requests race.
-   - Add a migration. `pnpm db:push` is fine for local work; tell us in the README how you would
-     migrate this on a live database.
-   - Extend the seed with enough data to make the UI useful: a mix of on-time, late, pending and
-     declined cases.
+   - Update the schema with `pnpm db:push`. No migration file needed; we will ask how you would
+     migrate this on a live database in the conversation.
+   - Extend the seed with a small mix: on-time, late, pending and declined cases.
 
 2. **API**
-   - List assignments and submissions with a computed status.
+   - List submissions with a computed status.
    - Create a submission.
    - Request an extension.
    - Approve or decline an extension.
    - Validate input with Zod and return a consistent error shape.
 
 3. **UI**
-   - A tutor-facing queue with statuses and a filter.
+   - A tutor-facing queue with status badges.
    - A detail view for one submission: deadline, extension request, approve or decline.
    - Loading, empty and error states.
 
@@ -47,9 +48,9 @@ time. Build the extension request flow and the tutor's queue.
    - Invalid state transitions must be rejected clearly.
 
 5. **Tests**
-   - Unit tests for the deadline and late calculation, including the boundary and timezone.
-   - Integration tests for the idempotent decision and the duplicate submission.
-   - Proportionate, not coverage chasing. Do not mock the database for the integration cases.
+   - One unit test for the deadline and late calculation, including the boundary and timezone.
+   - One integration test for either the idempotent decision or the duplicate submission.
+   - Proportionate, not coverage chasing. Do not mock the database for the integration case.
 
 6. **README**
    - How to run it.
@@ -57,12 +58,17 @@ time. Build the extension request flow and the tutor's queue.
    - What you would do with more time.
    - What you would monitor in production.
 
-### Stretch (only after the core is solid)
+### Stretch (optional, at most one)
 
-- Inbound webhook from the learning platform: at-least-once delivery, dedupe by event id, idempotent
-  processing.
-- Outbound notification job with retries, backoff and a dead-letter path.
-- Optimistic UI for approve or decline, with a rollback on failure.
+Only if the core is complete and tested. We do not expect these. A solid core with no stretch is a
+good submission.
+
+- Add a filter to the queue.
+- Add optimistic UI for approve or decline, with a rollback on failure.
+- Add the second integration test for the other risky transition.
+
+We are not asking you to build a webhook receiver. We will talk about at-least-once delivery,
+deduplication and idempotency in the follow-up conversation.
 
 ## What's in the starter
 
