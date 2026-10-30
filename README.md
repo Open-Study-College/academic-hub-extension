@@ -23,6 +23,9 @@ time. Build the extension request flow and the tutor's queue.
 
 Aim for this in about two hours. Four hours is the maximum.
 
+If you do not finish everything, that is fine. This task is about how you think about the problem and
+how you structure the solution, not about ticking every box.
+
 1. **Data model**
    - Add tables and constraints for submissions and extension requests.
    - Think about what stops a duplicate current submission, and what happens if two requests race.

@@ -13,6 +13,8 @@ Read this page before you start. The task itself is in [README.md](./README.md).
 - You can go over two hours if you are enjoying it or want to finish something, up to four. The
   timebox is there to protect your time and make sure we are not asking you to spend a weekend on
   this. It is not there to create artificial pressure.
+- If you do not finish everything, that is fine. We are assessing how you think about the problem and
+  how you structure the solution, not whether every requirement is complete.
 - If you finish early, we may be able to bring you in for a conversation sooner. Either way, please
   allow **two working days** for us to assess your work before we confirm next steps.
 - If you submit close to the deadline, we will do a quick technical review first. If it passes, we
@@ -151,7 +153,7 @@ looking for, and the commercial side of the role. It is not another technical te
 
 - Do not commit secrets, real customer data, or anything you do not have the right to share.
 - The timebox is a guide, not a rule. If you run over, tell us roughly how long you spent. If you
-  want to stop, tell us what you would have done next.
+  want to stop, tell us what you would have done next. An unfinished submission is fine.
 - Asking a clarifying question is fine and does not count against you.
 - Use whatever tools help you. AI is completely fine. We only ask that you understand the result
   and can explain it.
