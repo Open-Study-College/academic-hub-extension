@@ -1,0 +1,110 @@
+# Academic Hub extensions
+
+A standalone take-home exercise for Open Study College. Read
+[CANDIDATE_GUIDE.md](./CANDIDATE_GUIDE.md) first: it covers the timebox, forking and submission.
+
+## The task
+
+Open Study College students submit assignments and tutors mark them. Sometimes a student needs more
+time. Build the extension request flow and the tutor's queue.
+
+### The domain
+
+- A course has assignments. Each assignment has a due date and belongs to one course.
+- Students are enrolled on courses.
+- A student submits an assignment. There should only ever be one current submission per student per
+  assignment, even if they are allowed to resubmit.
+- A student can request an extension with a proposed date and a reason.
+- Staff approve or decline the request. An approved extension moves the effective deadline for that
+  student on that assignment.
+- A tutor sees a queue of submissions for their courses, with a clear status.
+
+### Must have
+
+1. **Data model and migration**
+   - Add the tables and constraints for submissions and extension requests.
+   - Think about what stops a duplicate current submission, and what happens if two requests race.
+   - Add a migration. `pnpm db:push` is fine for local work; tell us in the README how you would
+     migrate this on a live database.
+   - Extend the seed with enough data to make the UI useful: a mix of on-time, late, pending and
+     declined cases.
+
+2. **API**
+   - List assignments and submissions with a computed status.
+   - Create a submission.
+   - Request an extension.
+   - Approve or decline an extension.
+   - Validate input with Zod and return a consistent error shape.
+
+3. **UI**
+   - A tutor-facing queue with statuses and a filter.
+   - A detail view for one submission: deadline, extension request, approve or decline.
+   - Loading, empty and error states.
+
+4. **Failure and concurrency**
+   - Approving the same request twice must not create a duplicate or a 500.
+   - A duplicate submission must return a clear conflict, not a second row.
+   - Invalid state transitions must be rejected clearly.
+
+5. **Tests**
+   - Unit tests for the deadline and late calculation, including the boundary and timezone.
+   - Integration tests for the idempotent decision and the duplicate submission.
+   - Proportionate, not coverage chasing. Do not mock the database for the integration cases.
+
+6. **README**
+   - How to run it.
+   - Your schema decisions and tradeoffs.
+   - What you would do with more time.
+   - What you would monitor in production.
+
+### Stretch (only after the core is solid)
+
+- Inbound webhook from the learning platform: at-least-once delivery, dedupe by event id, idempotent
+  processing.
+- Outbound notification job with retries, backoff and a dead-letter path.
+- Optimistic UI for approve or decline, with a rollback on failure.
+
+## What's in the starter
+
+- React Router v7, tRPC, TanStack Query, Drizzle, SQLite, Zod, dayjs, Tailwind and Vitest.
+- `students`, `courses`, `assignments` and `enrolments` tables.
+- Seed data for two courses, six students and four assignments.
+- A tRPC router with `assignments.list` and `assignments.byId`.
+- A queue page and an assignment detail page reading through tRPC.
+- No submissions, extension requests, decision flow, status calculation or tests. Those are yours.
+
+## Getting started
+
+Requires Node 24 and pnpm.
+
+```sh
+pnpm install
+pnpm db:reset
+pnpm dev
+```
+
+Open http://localhost:5173.
+
+`pnpm db:reset` removes the local database, pushes the schema and seeds it. If you change the schema,
+run it again.
+
+## Commands
+
+| Command | What it does |
+| --- | --- |
+| `pnpm dev` | Start the dev server |
+| `pnpm build` | Production build |
+| `pnpm start` | Run the production build |
+| `pnpm typecheck` | Generate route types and typecheck |
+| `pnpm test` | Run Vitest |
+| `pnpm db:push` | Push the Drizzle schema to `local.db` |
+| `pnpm db:seed` | Reseed without recreating the database |
+| `pnpm db:reset` | Recreate and seed the database |
+
+## Notes
+
+- Dates are stored as ISO 8601 UTC strings. Use `dayjs` and assume `Europe/London`.
+  `app/lib/dates.ts` has a formatting helper and the timezone constant.
+- `app/db/schema.ts` is the schema. `app/db/seed.ts` is the seed.
+- This repository is standalone. Do not import from a monorepo or an internal package.
+- If setup is broken, email George rather than burning the timebox.
