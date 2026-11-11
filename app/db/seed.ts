@@ -199,7 +199,7 @@ const run = () => {
         studentId: 3,
         createdAt: dueAt({ days: -5 }),
         updatedAt: dueAt({ days: -4 }),
-        extensionDeadline: dueAt({ days: -1 }),
+        extensionDeadline: dueAt({ days: 4 }),
         reason: "my house was flooded",
         status: "approved",
         decidedBy: "tutor 1",
