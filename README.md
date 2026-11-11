@@ -35,18 +35,19 @@ how you structure the solution, not about ticking every box.
 
 **Submissions Table**
 
-- id
-- assignmentId
-- assignmentTitle?
-- courseId
-- studentId
-- createdAt
-- updatedAt
-- deadline - date
-- extensionGranted (bool)
-- status (on-time, late)
-- submissionLink (the submission)
+- ✅id
+- ✅assignmentId
+- ✅assignmentTitle?
+- courseId - do we need this? maybe overkill
+- ✅studentId
+- ✅createdAt
+- submittedAt
+- ✅deadline - date
+- extensionGranted (bool) - hmm do we need this - computed? what if an extension is submitted/granted before/after the work is submitted
+- status (on-time, late) - should this be a computed value returned via api..
+- ✅submissionLink (the submission)
 
+Unique(student, assignment)
 **Notes**
 Unique constraint on (courseId, assignmentId, studentId)
 
@@ -56,17 +57,20 @@ Would check student is enrolled on course.
 
 **Extensions Table**
 
-- id
-- assignmentId
+- ✅id
+- ✅assignmentId
 - assignmentTitle?
-- courseId
-- studentId
-- createdAt
-- updatedAt
-- status (pending, approved, declined), pending by default
-- extensionDate
+- ✅courseId
+- ✅studentId
+- ✅createdAt
+- ✅updatedAt
+- ✅status (pending, approved, declined), pending by default
+- extensionDeadline - date
 - reason
+- decidedBy - tutor name
+- decidedAt - timestamp
 
+Unique(student, assignment) - atm not allowing to request another extenison if the first is approved or declined.
 **Notes**
 
 If had more time would add a lock to status field and check tutor to the extension table (could be done in api)
@@ -94,6 +98,7 @@ If had more time would add a lock to status field and check tutor to the extensi
      - submission detailpage url assignements/:id/student/:id
        or
        assignements/:id/submission/:id
+       student feels better as student is the main entity and there is a one-to-one relationship
    - Loading, empty and error states.
 
 4. **Failure and concurrency**
