@@ -1,15 +1,8 @@
 import { asc, eq, and } from "drizzle-orm";
 import { z } from "zod";
-import {
-  assignments,
-  courses,
-  enrolments,
-  students,
-  submissions,
-  extensions,
-} from "~/db/schema";
+import { assignments, courses, enrolments, students } from "~/db/schema";
 import { publicProcedure, router } from "../trpc";
-import { getSubmissionStatus } from "../../lib/submissionStatus";
+import { submissionsRouter } from "./_app_submissions";
 
 export const appRouter = router({
   assignments: router({
@@ -62,52 +55,7 @@ export const appRouter = router({
         return { ...assignment, roster };
       }),
   }),
-  submissions: router({
-    listByAssignmentId: publicProcedure
-      .input(z.object({ assignmentId: z.number().int().positive() }))
-      .query(async ({ ctx, input }) => {
-        const submissionRows = await ctx.db
-          .select({
-            id: submissions.id,
-            submittedAt: submissions.submittedAt,
-            submissionLink: submissions.submissionLink,
-            assignmentId: assignments.id,
-            assignmentTitle: assignments.title,
-            assignmentDueAt: assignments.dueAt,
-            studentId: students.id,
-            studentFirstName: students.firstName,
-            studentLastName: students.lastName,
-            extensionStatus: extensions.status,
-            extensionDueDate: extensions.extensionDeadline,
-          })
-          .from(submissions)
-          .innerJoin(assignments, eq(submissions.assignmentId, assignments.id))
-          .innerJoin(students, eq(submissions.studentId, students.id))
-          .leftJoin(
-            extensions,
-            and(
-              eq(extensions.studentId, submissions.studentId),
-              eq(extensions.assignmentId, submissions.assignmentId),
-            ),
-          )
-          .where(eq(submissions.assignmentId, input.assignmentId))
-          .orderBy(asc(submissions.createdAt));
-
-        if (!submissionRows) {
-          return null;
-        }
-
-        return submissionRows.map((row) => ({
-          ...row,
-          status: getSubmissionStatus({
-            submittedAt: row.submittedAt,
-            dueAt: row.assignmentDueAt,
-            extensionDue:
-              row.extensionStatus === "approved" ? row.extensionDueDate : null,
-          }),
-        }));
-      }),
-  }),
+  submissions: submissionsRouter,
 });
 
 export type AppRouter = typeof appRouter;
