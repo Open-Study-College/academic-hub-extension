@@ -42,7 +42,7 @@ how you structure the solution, not about ticking every box.
 - ✅studentId
 - ✅createdAt
 - submittedAt
-- ✅deadline - date
+- deadline - date - this can be got from assignments - compute this?
 - extensionGranted (bool) - hmm do we need this - computed? what if an extension is submitted/granted before/after the work is submitted
 - status (on-time, late) - should this be a computed value returned via api..
 - ✅submissionLink (the submission)
@@ -91,31 +91,71 @@ If had more time would add a lock to status field and check tutor to the extensi
    - getSubmission
      - get submissionById, join with extension (studentId, courseId, assignmentId)
 
+   getSubmissionsByAssignment
+
+   ```
+   curl -s -G 'http://localhost:5173/api/trpc/submissions.listByAssignmentId' \
+   --data-urlencode 'input={"assignmentId":3}' | python3 -m json.tool
+   ```
+
+```
+
+getSubmissionById
+```
+
+curl -s -G 'http://localhost:5173/api/trpc/submissions.getById' \
+ --data-urlencode 'input={"id":6}' | python3 -m json.tool
+
+```
+
+createSubmission
+```
+
+curl -s -X POST 'http://localhost:5173/api/trpc/submissions.create' \  
+ -H 'content-type: application/json' \
+ -d '{"assignmentId":3,"studentId":7,"submissionLink":"https://www.example.com/submission7"}'
+
+````
+
+createExtension
+```
+curl -s -X POST 'http://localhost:5173/api/trpc/submissions.create' \
+  -H 'content-type: application/json' \
+  -d '{"assignmentId":3,"studentId":7,"submissionLink":"https://www.example.com/submission7"}'
+```
+
+updateExtension
+```
+curl -s -X POST 'http://localhost:5173/api/trpc/extensions.update' \
+  -H 'content-type: application/json' \
+  -d '{"id":5,"decision":"approved","decidedBy":"Professor Emma Randle"}'
+```
+
 3. **UI**
-   - A tutor-facing queue with status badges.
-     - in assignment detail page, list os submissions
-   - A detail view for one submission: deadline, extension request, approve or decline. (new page? popout? collapseable)
-     - submission detailpage url assignements/:id/student/:id
-       or
-       assignements/:id/submission/:id
-       student feels better as student is the main entity and there is a one-to-one relationship
-   - Loading, empty and error states.
+ - A tutor-facing queue with status badges.
+   - in assignment detail page, list os submissions
+ - A detail view for one submission: deadline, extension request, approve or decline. (new page? popout? collapseable)
+   - submission detailpage url assignements/:id/student/:id
+     or
+     assignements/:id/submission/:id
+     student feels better as student is the main entity and there is a one-to-one relationship
+ - Loading, empty and error states.
 
 4. **Failure and concurrency**
-   - Approving the same request twice must not create a duplicate or a 500.
-   - A duplicate submission must return a clear conflict, not a second row.
-   - Invalid state transitions must be rejected clearly.
+ - Approving the same request twice must not create a duplicate or a 500.
+ - A duplicate submission must return a clear conflict, not a second row.
+ - Invalid state transitions must be rejected clearly.
 
 5. **Tests**
-   - One unit test for the deadline and late calculation, including the boundary and timezone.
-   - One integration test for either the idempotent decision or the duplicate submission.
-   - Proportionate, not coverage chasing. Do not mock the database for the integration case.
+ - One unit test for the deadline and late calculation, including the boundary and timezone.
+ - One integration test for either the idempotent decision or the duplicate submission.
+ - Proportionate, not coverage chasing. Do not mock the database for the integration case.
 
 6. **README**
-   - How to run it.
-   - Your schema decisions and tradeoffs.
-   - What you would do with more time.
-   - What you would monitor in production.
+ - How to run it.
+ - Your schema decisions and tradeoffs.
+ - What you would do with more time.
+ - What you would monitor in production.
 
 ### Stretch (optional, at most one)
 
@@ -146,7 +186,7 @@ Requires Node 24 and pnpm.
 pnpm install
 pnpm db:reset
 pnpm dev
-```
+````
 
 Open http://localhost:5173.
 

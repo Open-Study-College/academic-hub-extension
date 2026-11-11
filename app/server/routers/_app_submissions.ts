@@ -1,5 +1,7 @@
 import { asc, eq, and } from "drizzle-orm";
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
+
 import { assignments, students, submissions, extensions } from "~/db/schema";
 import { publicProcedure, router } from "../trpc";
 import { getSubmissionStatus } from "../../lib/submissionStatus";
@@ -36,7 +38,10 @@ export const submissionsRouter = router({
         .orderBy(asc(submissions.createdAt));
 
       if (!submissionRows) {
-        return null;
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Submissions for this assignment do not exist",
+        });
       }
 
       return submissionRows.map((row) => ({
@@ -49,7 +54,7 @@ export const submissionsRouter = router({
         }),
       }));
     }),
-  listById: publicProcedure
+  getById: publicProcedure
     .input(z.object({ id: z.number().int().positive() }))
     .query(async ({ ctx, input }) => {
       const [submission] = await ctx.db
@@ -80,7 +85,10 @@ export const submissionsRouter = router({
         .orderBy(asc(submissions.createdAt));
 
       if (!submission) {
-        return null;
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Submission does not exist",
+        });
       }
       let status = getSubmissionStatus({
         submittedAt: submission.submittedAt,
@@ -91,5 +99,42 @@ export const submissionsRouter = router({
             : null,
       });
       return { submission, status };
+    }),
+  create: publicProcedure
+    .input(
+      z.object({
+        assignmentId: z.number().int().positive(),
+        studentId: z.number().int().positive(),
+        submissionLink: z.string().url(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const [created] = await ctx.db
+          .insert(submissions)
+          .values({
+            assignmentId: input.assignmentId,
+            studentId: input.studentId,
+            submissionLink: input.submissionLink,
+            submittedAt: new Date().toISOString(),
+          })
+          .returning();
+        return created;
+      } catch (err) {
+        const code = (err as { code?: string }).code;
+        if (code === "SQLITE_CONSTRAINT_UNIQUE") {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "This student has already submitted this assignment.",
+          });
+        }
+        if (code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Assignment or student does not exist.",
+          });
+        }
+        throw err;
+      }
     }),
 });

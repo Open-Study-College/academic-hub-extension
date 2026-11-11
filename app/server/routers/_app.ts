@@ -3,6 +3,7 @@ import { z } from "zod";
 import { assignments, courses, enrolments, students } from "~/db/schema";
 import { publicProcedure, router } from "../trpc";
 import { submissionsRouter } from "./_app_submissions";
+import { extensionsRouter } from "./_app_extensions";
 
 export const appRouter = router({
   assignments: router({
@@ -56,6 +57,7 @@ export const appRouter = router({
       }),
   }),
   submissions: submissionsRouter,
+  extensions: extensionsRouter,
 });
 
 export type AppRouter = typeof appRouter;

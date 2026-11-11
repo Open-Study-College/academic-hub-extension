@@ -115,7 +115,7 @@ export const extensions = sqliteTable(
     extensionDeadline: text("extension_deadline").notNull(),
     reason: text("reason").notNull(),
     decidedBy: text("decided_by"),
-    decidedAt: text("decided_at"),
+    decidedAt: text("decided_at").$onUpdate(() => new Date().toISOString()),
   },
   (table) => [
     index("extensions_assignment_id_idx").on(table.assignmentId),
