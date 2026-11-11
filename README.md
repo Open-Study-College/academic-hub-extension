@@ -33,16 +33,67 @@ how you structure the solution, not about ticking every box.
      migrate this on a live database in the conversation.
    - Extend the seed with a small mix: on-time, late, pending and declined cases.
 
+**Submissions Table**
+
+- id
+- assignmentId
+- assignmentTitle?
+- courseId
+- studentId
+- createdAt
+- updatedAt
+- deadline - date
+- extensionGranted (bool)
+- status (on-time, late)
+- submissionLink (the submission)
+
+**Notes**
+Unique constraint on (courseId, assignmentId, studentId)
+
+Do I need to lock if an assignment has been submitted and no extension granted?
+
+Would check student is enrolled on course.
+
+**Extensions Table**
+
+- id
+- assignmentId
+- assignmentTitle?
+- courseId
+- studentId
+- createdAt
+- updatedAt
+- status (pending, approved, declined), pending by default
+- extensionDate
+- reason
+
+**Notes**
+
+If had more time would add a lock to status field and check tutor to the extension table (could be done in api)
+
 2. **API**
    - List submissions with a computed status.
+     - get all submissions
+     - more time - show all students enroled on course then get their submissions to show anyone who has not submitted work
    - Create a submission.
+     - courseId, assignmentId studentId, submissionLink
    - Request an extension.
+     - createExtension
+     - courseId, assignmentId studentId, extensionDate, reason
    - Approve or decline an extension.
+     - UpdateExtension
+     - extensionId, status (approve/decline)
    - Validate input with Zod and return a consistent error shape.
+   - getSubmission
+     - get submissionById, join with extension (studentId, courseId, assignmentId)
 
 3. **UI**
    - A tutor-facing queue with status badges.
-   - A detail view for one submission: deadline, extension request, approve or decline.
+     - in assignment detail page, list os submissions
+   - A detail view for one submission: deadline, extension request, approve or decline. (new page? popout? collapseable)
+     - submission detailpage url assignements/:id/student/:id
+       or
+       assignements/:id/submission/:id
    - Loading, empty and error states.
 
 4. **Failure and concurrency**
@@ -99,16 +150,16 @@ run it again.
 
 ## Commands
 
-| Command | What it does |
-| --- | --- |
-| `pnpm dev` | Start the dev server |
-| `pnpm build` | Production build |
-| `pnpm start` | Run the production build |
-| `pnpm typecheck` | Generate route types and typecheck |
-| `pnpm test` | Run Vitest |
-| `pnpm db:push` | Push the Drizzle schema to `local.db` |
-| `pnpm db:seed` | Reseed without recreating the database |
-| `pnpm db:reset` | Recreate and seed the database |
+| Command          | What it does                           |
+| ---------------- | -------------------------------------- |
+| `pnpm dev`       | Start the dev server                   |
+| `pnpm build`     | Production build                       |
+| `pnpm start`     | Run the production build               |
+| `pnpm typecheck` | Generate route types and typecheck     |
+| `pnpm test`      | Run Vitest                             |
+| `pnpm db:push`   | Push the Drizzle schema to `local.db`  |
+| `pnpm db:seed`   | Reseed without recreating the database |
+| `pnpm db:reset`  | Recreate and seed the database         |
 
 ## Notes
 
