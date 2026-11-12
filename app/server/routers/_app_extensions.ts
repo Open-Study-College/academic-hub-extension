@@ -70,20 +70,6 @@ export const extensionsRouter = router({
           .returning();
         return created;
       } catch (err) {
-        const code = (err as { code?: string }).code;
-        if (code === "SQLITE_CONSTRAINT_UNIQUE") {
-          throw new TRPCError({
-            code: "CONFLICT",
-            message:
-              "This student has already requested an extension for this assignment.",
-          });
-        }
-        if (code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Assignment or student does not exist.",
-          });
-        }
         throw err;
       }
     }),

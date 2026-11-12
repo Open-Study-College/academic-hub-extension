@@ -1,9 +1,4 @@
-# Academic Hub extensions
-
-A standalone take-home exercise for Open Study College. Read
-[CANDIDATE_GUIDE.md](./CANDIDATE_GUIDE.md) first: it covers the timebox, forking and submission.
-
-## The task
+# The task
 
 Open Study College students submit assignments and tutors mark them. Sometimes a student needs more
 time. Build the extension request flow and the tutor's queue.
@@ -12,11 +7,9 @@ time. Build the extension request flow and the tutor's queue.
 
 - A course has assignments. Each assignment has a due date and belongs to one course.
 - Students are enrolled on courses.
-- A student submits an assignment. There should only ever be one current submission per student per
-  assignment, even if they are allowed to resubmit.
+- A student submits an assignment. There should only ever be one current submission per student per assignment, even if they are allowed to resubmit.
 - A student can request an extension with a proposed date and a reason.
-- Staff approve or decline the request. An approved extension moves the effective deadline for that
-  student on that assignment.
+- Staff approve or decline the request. An approved extension moves the effective deadline for that student on that assignment.
 - A tutor sees a queue of submissions for their courses, with a clear status.
 
 ### Must have
@@ -38,7 +31,7 @@ how you structure the solution, not about ticking every box.
 
 ## Submissions Table
 
-The [Submission model](./app/db/schema.ts) contains all the data needed for a student to submit their work and receive feedback from the tutor. Any other data needed can be retrieved via a join to the students, assignment and extensiosn table. A unique constraint on the studentId and assignmentId means a student can only submit their work once per assignment. I decided not to add the assignment title or assignemnt due date to the db model as this could become stale if an extension is granted or would need to be updated when an extension is granted, but this data can be found in the extensions table so it can be retrieved via a join.
+The [Submission model](./app/db/schema.ts) contains all the data needed for a student to submit their work and receive feedback from the tutor. Any other data needed can be retrieved via a join to the students, assignment and extension table. A unique constraint on the studentId and assignmentId means a student can only submit their work once per assignment, and duplicate submissions will be rejected. I decided not to add the assignment title or assignment due date to the db model as this could become stale if an extension is granted or would need to be updated when an extension is granted, this data can be found in the assignment and extensions table so it can be retrieved via a join.
 As every submission must have a student and be submitted against an assignment their respective ids are stored as foreign keys.
 The majority of the keys are not null as they are required when a student submits some work. The tutorName, grade and feedback can be null as they will be updated after the initial creation of a submisison record - when a tutor marks the work.
 
@@ -51,7 +44,7 @@ If I had more time I would:
 
 ## Extensions Table
 
-The [Extension model](./app/db/schema.ts) contains all the data needed for a student to submit an extension request. A unique constraint on the studentId and assignmentId means a student can only submit an extension request once per assignment.
+The [Extension model](./app/db/schema.ts) contains all the data needed for a student to submit an extension request. A unique constraint on the studentId and assignmentId means a student can only submit an extension request once per assignment, and duplicate requests will be rejected meaning a student cannot submit a new request if their first one is rejected.
 As every submission must have a student and be submitted against an assignment their respective ids are stored as foreign keys.
 The majority of the keys are not null as they are required when a student submits some work. TutorName and decidedAt can be null as they will be updated after the initial creation of an extension record - when a tutor declines or approves the request.
 
@@ -67,7 +60,6 @@ If had more time would add a lock to status field and a check so that only the t
 - ✅Approve or decline an extension.
 - ✅Validate input with Zod and return a consistent error shape.
 - ✅getSubmission
-  - get submissionById, join with extension (studentId, courseId, assignmentId)
 
 # Emma's Notes
 
@@ -86,12 +78,12 @@ A tutor can then click on a submission to see more details, therefore I created 
 A student needs to be able to submit a submission, which is the create
 
 **Extensions**
-The extension api has a create and update- which allows students to create an extension request, and an update to allow tutors to approve or decline the request.
+The extension api has a create and update- which allows students to create an extension request, and an update to allow tutors to approve or decline the request, only if the status is pending, ensuring that an extension request can only be approved once.
 
 ## Improvements
 
-- If I had more time I would show all students enroled on course then get their submissions to show anyone who has not submitted work
-- The plan for this project, which I didnt manage to implement, would be to see if an extension had been requested on the submission detail page - hence returning this data in the submission.getById. However, there is no way for a tutor to see if someone has requested an extension before they have submitted thier work. I would therefore, create a extensions.GetByAssignment to add a view fo requested extensions.
+- If I had more time I would show all students enrolled on course then get their submissions to show anyone who has not submitted work
+- The plan for this project, which I didnt manage to implement, would be to see if an extension had been requested on the submission detail page - hence returning this data in the submission.getById. However, there is no way for a tutor to see if someone has requested an extension before they have submitted their work. I would therefore, create a extensions.GetByAssignment to add a view fo requested extensions.
 
 ## Below are curl commands added operations
 
@@ -144,7 +136,7 @@ curl -s -X POST 'http://localhost:5173/api/trpc/extensions.update' \
 ## UI
 
 I only managed to implement the submissions queue on the assignment page.
-This inlcudes a list of submissions per assignemnt under the list of enrolled students.
+This includes a list of submissions per assignment under the list of enrolled students.
 
 ## Improvements
 
@@ -153,6 +145,15 @@ If i had mroe time i would tidy the UI - adding a badge to the status, I would i
 # Emma's Notes
 
 Unfortunately i did not have time to implement the tasks below.
+
+## Known Gaps
+
+- I didnt get round to adding tests
+- I didnt add the detailed submission page with the ability to approve or decline an extension
+- No enrollment check on submission for assignment
+- extension update - have not added a return/feedback for when nothing is updated, i.e. two simultaneous approvals
+- I didn't check the student actually enrolled on course before allowing a submission.
+- Monitoring - I would monitor 409 conflict rates, pending extensions that are older than the submission date - may not be seen by tutor - go stale, and 5xx rate and latency on the queue.
 
 # 4. **Failure and concurrency**
 
@@ -190,7 +191,6 @@ deduplication and idempotency in the follow-up conversation.
 Requires Node 24 and pnpm.
 
 ```sh
-git checkout model-plan
 pnpm install
 pnpm db:reset
 pnpm dev
