@@ -120,9 +120,9 @@ curl -s -X POST 'http://localhost:5173/api/trpc/submissions.create' \
 ### createExtension
 
 ```
-curl -s -X POST 'http://localhost:5173/api/trpc/submissions.create' \
+curl -s -X POST 'http://localhost:5173/api/trpc/extensions.create' \
   -H 'content-type: application/json' \
-  -d '{"assignmentId":3,"studentId":7,"submissionLink":"https://www.example.com/submission7"}'
+  -d '{"assignmentId":3,"studentId":4,"reason":"I forgot","extensionDeadline":"2026-11-20T23:59:00.000Z" }'
 ```
 
 ### updateExtension
