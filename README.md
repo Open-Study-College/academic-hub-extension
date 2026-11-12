@@ -33,6 +33,7 @@ how you structure the solution, not about ticking every box.
      migrate this on a live database in the conversation.
    - Extend the seed with a small mix: on-time, late, pending and declined cases.
 
+##Emma's Notes
 **Submissions Table**
 
 - ✅id
@@ -41,19 +42,25 @@ how you structure the solution, not about ticking every box.
 - courseId - do we need this? maybe overkill
 - ✅studentId
 - ✅createdAt
-- submittedAt
+- ✅submittedAt
 - deadline - date - this can be got from assignments - compute this?
 - extensionGranted (bool) - hmm do we need this - computed? what if an extension is submitted/granted before/after the work is submitted
 - status (on-time, late) - should this be a computed value returned via api..
 - ✅submissionLink (the submission)
+- ✅grade
+- ✅feedback
 
 Unique(student, assignment)
 **Notes**
-Unique constraint on (courseId, assignmentId, studentId)
+Unique constraint on ( assignmentId, studentId)
 
-Do I need to lock if an assignment has been submitted and no extension granted?
+Could lock to updates from student once submitted, or if an assignment has been submitted and no extension granted? Only open to tutor to update.
 
-Would check student is enrolled on course.
+Should check student is actually enrolled on course.
+
+Have not added data from other tables such as due date, extension granted, extension date - could do if the submission needs a snapshot of the data at teh time.
+
+Another route - could be to create all submissions for assignments when a student enolls on a course - then a tutor could have visibility of the submissions that have not been submitted, although could also see this in the ui - as there is no submission for the student.
 
 **Extensions Table**
 

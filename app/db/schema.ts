@@ -81,6 +81,8 @@ export const submissions = sqliteTable(
       .default(sql`CURRENT_TIMESTAMP`)
       .$onUpdate(() => new Date().toISOString()),
     submissionLink: text("submission_link").notNull(),
+    grade: text("grade"),
+    feedback: text("feedback"),
   },
   (table) => [
     index("submissions_assignment_id_idx").on(table.assignmentId),
@@ -115,7 +117,7 @@ export const extensions = sqliteTable(
     extensionDeadline: text("extension_deadline").notNull(),
     reason: text("reason").notNull(),
     decidedBy: text("decided_by"),
-    decidedAt: text("decided_at").$onUpdate(() => new Date().toISOString()),
+    decidedAt: text("decided_at"),
   },
   (table) => [
     index("extensions_assignment_id_idx").on(table.assignmentId),
