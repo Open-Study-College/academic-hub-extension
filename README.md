@@ -26,20 +26,20 @@ Aim for this in about two hours. Four hours is the maximum.
 If you do not finish everything, that is fine. This task is about how you think about the problem and
 how you structure the solution, not about ticking every box.
 
-1. **Data model**
-   - Add tables and constraints for submissions and extension requests.
-   - Think about what stops a duplicate current submission, and what happens if two requests race.
-   - Update the schema with `pnpm db:push`. No migration file needed; we will ask how you would
-     migrate this on a live database in the conversation.
-   - Extend the seed with a small mix: on-time, late, pending and declined cases.
+# 1. **Data model**
+
+- Add tables and constraints for submissions and extension requests.
+- Think about what stops a duplicate current submission, and what happens if two requests race.
+- Update the schema with `pnpm db:push`. No migration file needed; we will ask how you would
+  migrate this on a live database in the conversation.
+- Extend the seed with a small mix: on-time, late, pending and declined cases.
 
 # Emma's Notes
 
 ## Submissions Table
 
 The [Submission model](./app/db/schema.ts) contains all the data needed for a student to submit their work and receive feedback from the tutor. Any other data needed can be retrieved via a join to the students, assignment and extensiosn table. A unique constraint on the studentId and assignmentId means a student can only submit their work once per assignment. I decided not to add the assignment title or assignemnt due date to the db model as this could become stale if an extension is granted or would need to be updated when an extension is granted, but this data can be found in the extensions table so it can be retrieved via a join.
-As every submission must have a student and be submitted against an assignment their respective ids are stored as foreign keys, and a uique constraint has been added on studentID and assignemntId.
-A unique constraint
+As every submission must have a student and be submitted against an assignment their respective ids are stored as foreign keys.
 The majority of the keys are not null as they are required when a student submits some work. The tutorName, grade and feedback can be null as they will be updated after the initial creation of a submisison record - when a tutor marks the work.
 
 ### Improvements
@@ -49,7 +49,7 @@ If I had more time I would:
 - lock the record to updates, unless its from the tutor who would submit a grade update.
 - check the student actually enrolled on course before allowing a submission.
 
-## Extensionss Table
+## Extensions Table
 
 The [Extension model](./app/db/schema.ts) contains all the data needed for a student to submit an extension request. A unique constraint on the studentId and assignmentId means a student can only submit an extension request once per assignment.
 As every submission must have a student and be submitted against an assignment their respective ids are stored as foreign keys.
@@ -59,14 +59,15 @@ The majority of the keys are not null as they are required when a student submit
 
 If had more time would add a lock to status field and a check so that only the tutor could update the extension table (could be done in api)
 
-2. **API**
-   - ✅List submissions with a computed status.
-   - ✅Create a submission.
-   - ✅Request an extension.
-   - ✅Approve or decline an extension.
-   - ✅Validate input with Zod and return a consistent error shape.
-   - ✅getSubmission
-     - get submissionById, join with extension (studentId, courseId, assignmentId)
+# 2. **API**
+
+- ✅List submissions with a computed status.
+- ✅Create a submission.
+- ✅Request an extension.
+- ✅Approve or decline an extension.
+- ✅Validate input with Zod and return a consistent error shape.
+- ✅getSubmission
+  - get submissionById, join with extension (studentId, courseId, assignmentId)
 
 # Emma's Notes
 
@@ -132,7 +133,7 @@ curl -s -X POST 'http://localhost:5173/api/trpc/extensions.update' \
   -d '{"id":5,"decision":"approved","tutorName":"Emma Randle"}'
 ```
 
-3. **UI**
+# 3. **UI**
 
 - A tutor-facing queue with status badges.
 - A detail view for one submission: deadline, extension request, approve or decline. (new page? popout? collapseable)
@@ -153,19 +154,19 @@ If i had mroe time i would tidy the UI - adding a badge to the status, I would i
 
 Unfortunately i did not have time to implement the tasks below.
 
-4. **Failure and concurrency**
+# 4. **Failure and concurrency**
 
 - Approving the same request twice must not create a duplicate or a 500.
 - A duplicate submission must return a clear conflict, not a second row.
 - Invalid state transitions must be rejected clearly.
 
-5. **Tests**
+# 5. **Tests**
 
 - One unit test for the deadline and late calculation, including the boundary and timezone.
 - One integration test for either the idempotent decision or the duplicate submission.
 - Proportionate, not coverage chasing. Do not mock the database for the integration case.
 
-6. **README**
+# 6. **README**
 
 - How to run it.
 - Your schema decisions and tradeoffs.
