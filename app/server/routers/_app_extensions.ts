@@ -4,7 +4,6 @@ import { TRPCError } from "@trpc/server";
 
 import { extensions } from "~/db/schema";
 import { publicProcedure, router } from "../trpc";
-import { doublePrecision } from "drizzle-orm/gel-core";
 
 export const extensionsRouter = router({
   create: publicProcedure
@@ -52,7 +51,7 @@ export const extensionsRouter = router({
       z.object({
         id: z.number().int().positive(),
         decision: z.enum(["approved", "declined"]),
-        decidedBy: z.string().min(1).max(50).trim(),
+        tutorName: z.string().min(1).max(50).trim(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -62,7 +61,7 @@ export const extensionsRouter = router({
           .update(extensions)
           .set({
             status: input.decision,
-            decidedBy: input.decidedBy,
+            tutorName: input.tutorName,
             decidedAt: now,
           })
           .where(

@@ -81,6 +81,7 @@ export const submissions = sqliteTable(
       .default(sql`CURRENT_TIMESTAMP`)
       .$onUpdate(() => new Date().toISOString()),
     submissionLink: text("submission_link").notNull(),
+    tutorName: text("tutorName"),
     grade: text("grade"),
     feedback: text("feedback"),
   },
@@ -116,7 +117,7 @@ export const extensions = sqliteTable(
     }).notNull(),
     extensionDeadline: text("extension_deadline").notNull(),
     reason: text("reason").notNull(),
-    decidedBy: text("decided_by"),
+    tutorName: text("tutorName"),
     decidedAt: text("decided_at"),
   },
   (table) => [
