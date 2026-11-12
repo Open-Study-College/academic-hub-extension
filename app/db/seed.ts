@@ -202,7 +202,7 @@ const run = () => {
         extensionDeadline: dueAt({ days: 4 }),
         reason: "my house was flooded",
         status: "approved",
-        decidedBy: "tutor 1",
+        tutorName: "tutor 1",
         decidedAt: dueAt({ days: -4 }),
       },
       {
@@ -214,7 +214,7 @@ const run = () => {
         extensionDeadline: dueAt({ days: 8 }),
         reason: "my cat deleted my files",
         status: "declined",
-        decidedBy: "tutor 1",
+        tutorName: "tutor 1",
         decidedAt: dueAt({ days: -4 }),
       },
       {
@@ -236,14 +236,14 @@ const run = () => {
         extensionDeadline: dueAt({ days: 7 }),
         reason: "i have been in hospital",
         status: "approved",
-        decidedBy: "tutor 1",
+        tutorName: "tutor 1",
         decidedAt: dueAt({ days: -1 }),
       },
     ])
     .run();
 
   console.log(
-    "Seeded 2 courses, 6 students, 4 assignments, 6 submissions & 3 extensions",
+    "Seeded 2 courses, 7 students, 4 assignments, 6 submissions & 4 extensions",
   );
 };
 

@@ -91,7 +91,7 @@ The extension api has a create and update- which allows students to create an ex
 ## Improvements
 
 - If I had more time I would show all students enroled on course then get their submissions to show anyone who has not submitted work
-- The plan for this project which I didnt manage to implement would be to see if an extension had been requested on the detail for the submission - hence returning this data in the submission.getById. However, there is no way for a tutor to see if someone has requested an extension before they have submitted thier work. I would therefore, create a extensions.GetByAssignment to add a view fo requested extensions.
+- The plan for this project, which I didnt manage to implement, would be to see if an extension had been requested on the submission detail page - hence returning this data in the submission.getById. However, there is no way for a tutor to see if someone has requested an extension before they have submitted thier work. I would therefore, create a extensions.GetByAssignment to add a view fo requested extensions.
 
 ## Below are curl commands added operations
 
